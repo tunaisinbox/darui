@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせフォーム</title>
+  <style>
+    /* ==============================================
+       カラーパレット & デザイン変数
+       ============================================== */
+    :root {
+      --color-main: #99AABB;         /* メインカラー */
+      --color-main-hover: #8899AA;   /* ホバー時メイン */
+      --color-highlight: #E2E8F0;    /* ハイライト */
+      --color-shadow: #B0C4DE;       /* シャドウ / アクセント */
+      --color-bg: #F0F4F8;           /* 白っぽいちょっと黒い水色 */
+      --color-card-bg: #FFFFFF;      /* カード背景 */
+      --color-text: #2D3748;         /* 主テキスト（見やすさ重視） */
+      --color-text-muted: #64748B;   /* 補足テキスト */
+      --color-error: #E53E3E;        /* エラー色 */
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ==============================================
+       ベーススタイル
+       ============================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      line-height: 1.6;
+    }
+
+    /* ==============================================
+       カードコンテナ & アニメーション
+       ============================================== */
+    .form-card {
+      background: var(--color-card-bg);
+      width: 100%;
+      max-width: 560px;
+      padding: 2.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      /* 立体感のあるソフトな二重シャドウ */
+      box-shadow: 
+        0 10px 30px -5px rgba(176, 196, 222, 0.3),
+        0 20px 25px -5px rgba(153, 170, 187, 0.15);
+      animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* カード上部のアクセントライン */
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--color-main), var(--color-shadow), var(--color-highlight));
+    }
+
+    .form-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    /* ==============================================
+       注意事項エリア (CONFIGで流し込み)
+       ============================================== */
+    .notice-box {
+      background-color: #F8FAFC;
+      border-left: 4px solid var(--color-shadow);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      animation: fadeIn 1s ease-out 0.2s both;
+    }
+
+    .notice-box h3 {
+      font-size: 0.95rem;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .notice-box ul {
+      padding-left: 1.2rem;
+    }
+
+    .notice-box li {
+      margin-bottom: 0.25rem;
+    }
+
+    /* ==============================================
+       フォーム要素
+       ============================================== */
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-text);
+      transition: var(--transition-smooth);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      color: var(--color-text);
+      background-color: #FAFCFF;
+      border: 2px solid var(--color-highlight);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: var(--transition-smooth);
+      resize: vertical;
+    }
+
+    /* 入力エリアフォーカス時のアニメーション */
+    .form-control:focus {
+      background-color: #FFFFFF;
+      border-color: var(--color-main);
+      box-shadow: 0 0 0 4px rgba(153, 170, 187, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .form-control::placeholder {
+      color: #A0AEC0;
+    }
+
+    textarea.form-control {
+      min-height: 140px;
+    }
+
+    /* ==============================================
+       送信ボタン & インタラクション
+       ============================================== */
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      background-color: var(--color-main);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 12px rgba(153, 170, 187, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* リップル（波紋）用 */
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease-out, height 0.6s ease-out;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--color-main-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(153, 170, 187, 0.5);
+    }
+
+    .btn-submit:active {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(153, 170, 187, 0.3);
+    }
+
+    .btn-submit:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* ==============================================
+       キーフレームアニメーション
+       ============================================== */
+    @keyframes fadeInSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h1 class="form-title">お問い合わせ</h1>
+
+    <!-- JSで設定（CONFIG）した注意事項がここに入ります -->
+    <div class="notice-box" id="noticeBox">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        注意事項
+      </h3>
+      <ul id="noticeList"></ul>
+    </div>
+
+    <form id="contactForm">
+      <div class="form-group">
+        <label class="form-label" for="message">お問い合わせ内容</label>
+        <textarea 
+          id="message" 
+          class="form-control" 
+          placeholder="こちらにご質問やご要望を入力してください..." 
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span>メールアプリを起動して送信</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    /* ==============================================
+       コンフィグ設定 (自由に書き換えてください)
+       ============================================== */
+    const CONFIG = {
+      // 送信先のメールアドレス
+      recipientEmail: "example@yourdomain.com",
+
+      // 注意事項リスト
+      notices: [
+        "送信ボタンを押されたら、次の種目に同意したことになります",
+        "にんにんにんにんにんにんにんにんにんにんにんにんにんにんにん",
+        "営業や勧誘は一切受け付けておりません。送信1回ごとに地球温暖化が10％進行します。また送信5回ごとにあなたを食べに行きます🍴",
+        "当チャンネル、またはサイトやサービスは個人運営ですので、優しくしていただかないと心が折れて無視や、メールアドレスを晒すなどの行為をするかもしれません。"  ,
+        "怪文書や非常識な文章はAIがブロックするため届きません。",
+
+      ]
+    };
+
+    /* ==============================================
+       初期化処理
+       ============================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      // 注意事項の書き込み
+      const noticeList = document.getElementById("noticeList");
+      CONFIG.notices.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        noticeList.appendChild(li);
+      });
+    });
+
+    /* ==============================================
+       送信処理 (mailto: 生成)
+       ============================================== */
+    const form = document.getElementById("contactForm");
+    const messageInput = document.getElementById("message");
+    const formCard = document.querySelector(".form-card");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const messageValue = messageInput.value.trim();
+
+      if (!messageValue) {
+        // 未入力時はカードを揺らすアニメーション
+        formCard.classList.add("shake");
+        setTimeout(() => formCard.classList.remove("shake"), 400);
+        return;
+      }
+
+      // 件名（Subject）は含めず、本文（Body）のみをURLエンコード
+      const mailtoUrl = `mailto:${CONFIG.recipientEmail}?body=${encodeURIComponent(messageValue)}`;
+
+      // メールアプリを開く
+      window.location.href = mailtoUrl;
+    });
+  </script>
+</body>
+</html>
