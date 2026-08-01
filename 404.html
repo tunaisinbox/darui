@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>404 - Page Not Found</title>
+    <style>
+        /* 基本設定 */
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body { background-color: #000; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+
+        /* 背景動画 */
+        #bg-video {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            object-fit: cover; z-index: -1; opacity: 0.3; pointer-events: none;
+        }
+
+        /* 404画面 */
+        #error-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; position: relative; z-index: 1; transition: opacity 0.5s;
+        }
+        
+        .error-title {
+            font-size: clamp(80px, 15vw, 150px); font-weight: 900; 
+            letter-spacing: 5px; color: #ffb6c1;
+            text-shadow: 0 0 20px #ffb6c1, 0 0 40px #ff007f;
+            cursor: default; /* 触れた時は普通の矢印カーソル */
+            transition: all 0.3s ease;
+        }
+        
+        /* 404クリック時の文字変形 */
+        .error-title.deform {
+            animation: cyber-glitch 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes cyber-glitch {
+            0% { transform: scale(1) skewX(0deg); filter: hue-rotate(0deg); }
+            30% { transform: scale(1.2, 0.8) skewX(20deg); filter: hue-rotate(90deg); opacity: 0.8; }
+            60% { transform: scale(0.8, 1.3) skewX(-20deg); filter: hue-rotate(180deg); letter-spacing: 30px; }
+            100% { transform: scale(0); filter: hue-rotate(360deg); opacity: 0; }
+        }
+
+        .error-desc { font-size: 18px; letter-spacing: 4px; color: #e0e0e0; margin-bottom: 40px; text-transform: uppercase; }
+        
+        /* ボタン共通スタイル */
+        .btn-style {
+            padding: 12px 35px; font-size: 16px; color: #fff; background: transparent;
+            border: 2px solid #ffb6c1; border-radius: 30px; text-decoration: none;
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.2); transition: 0.3s; cursor: pointer;
+            letter-spacing: 2px; text-align: center; font-weight: bold;
+        }
+        .btn-style:hover { background: #ffb6c1; color: #000; box-shadow: 0 0 25px #ffb6c1; }
+
+        /* もう一度プレイボタンの追加調整（ボタン同士の間隔用） */
+        .retry-btn {
+            margin-bottom: 15px;
+            background: rgba(255, 182, 193, 0.1);
+        }
+
+        /* カウントダウン */
+        #countdown-screen {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; align-items: center; justify-content: center; z-index: 5;
+            background: rgba(0,0,0,0.5);
+        }
+        #countdown-text { font-size: 180px; font-weight: 900; color: #fff; text-shadow: 0 0 30px #ff007f, 0 0 60px #ffb6c1; }
+
+        /* ミニゲーム画面 */
+        #game-screen {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10; background: rgba(0, 0, 0, 0.8);
+        }
+        
+        #game-instruction { font-size: 24px; color: #ffb6c1; margin-bottom: 20px; font-weight: bold; text-shadow: 0 0 10px #ffb6c1; }
+        #click-pad {
+            width: 250px; height: 250px; background: rgba(255, 182, 193, 0.1);
+            border: 4px solid #ffb6c1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 64px; font-weight: bold; color: #fff;
+            box-shadow: 0 0 30px rgba(255, 182, 193, 0.3);
+            cursor: pointer; transition: transform 0.05s, box-shadow 0.2s;
+        }
+        #click-pad:active { transform: scale(0.95); box-shadow: 0 0 50px #ffb6c1; }
+        #timer-text { font-size: 20px; margin-top: 30px; color: #e0e0e0; }
+
+        /* 結果画面 */
+        #result-screen {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; align-items: center; justify-content: center; flex-direction: column;
+            background: rgba(0, 0, 0, 0.9); z-index: 20;
+            backdrop-filter: blur(10px);
+        }
+        #result-screen h2 { font-size: 40px; margin-bottom: 10px; color: #ffb6c1; text-shadow: 0 0 10px #ffb6c1; }
+        #result-score { font-size: 50px; font-weight: bold; color: #fff; text-shadow: 0 0 20px #ff007f; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <!-- 背景動画 -->
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    </video>
+
+    <!-- 404画面 -->
+    <div id="error-screen">
+        <div id="error-404" class="error-title">404</div>
+        <div class="error-desc">Page Not Found</div>
+        <a href="/" class="btn-style">ホームに戻る</a>
+    </div>
+
+    <!-- カウントダウン -->
+    <div id="countdown-screen">
+        <div id="countdown-text">3</div>
+    </div>
+
+    <!-- ゲーム画面 -->
+    <div id="game-screen">
+        <div id="game-instruction">画面を叩くか、キーボードを押して！</div>
+        <div id="click-pad">0</div>
+        <div id="timer-text">残り時間: 30秒</div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen">
+        <h2>GAME CLEAR!</h2>
+        <div id="result-score">0 💥</div>
+        <!-- ホームボタンの上に「もう一度プレイ」を追加 -->
+        <button id="retry-btn" class="btn-style retry-btn">もう一度プレイ</button>
+        <a href="/" class="btn-style">ホームに戻る</a>
+    </div>
+
+    <script>
+        // ==========================================
+        // 保存・右クリック・ショートカット無効化
+        // ==========================================
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) || 
+                (e.ctrlKey && ['u', 's', 'p'].includes(e.key))) {
+                e.preventDefault();
+            }
+        });
+
+        // ==========================================
+        // 画面遷移ロジック
+        // ==========================================
+        const error404 = document.getElementById('error-404');
+        const errorScreen = document.getElementById('error-screen');
+        const countdownScreen = document.getElementById('countdown-screen');
+        const countdownText = document.getElementById('countdown-text');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const retryBtn = document.getElementById('retry-btn');
+
+        // 最初のアニメーション開始関数
+        function triggerStartSequence() {
+            error404.classList.add('deform');
+            setTimeout(() => {
+                errorScreen.style.display = 'none';
+                countdownScreen.style.display = 'flex';
+                
+                let count = 3;
+                countdownText.textContent = count; // 初期リセット
+                
+                const timer = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        countdownText.textContent = count;
+                    } else if (count === 0) {
+                        countdownText.textContent = 'START';
+                    } else {
+                        clearInterval(timer);
+                        countdownScreen.style.display = 'none';
+                        gameScreen.style.display = 'flex';
+                        startGame();
+                    }
+                }, 1000);
+            }, 800);
+        }
+
+        error404.addEventListener('click', triggerStartSequence);
+
+        // もう一度プレイボタンの動作設定
+        retryBtn.addEventListener('click', () => {
+            // 結果画面を隠し、404画面の状態を一度リセットして戻す
+            resultScreen.style.display = 'none';
+            error404.classList.remove('deform');
+            errorScreen.style.display = 'flex';
+            
+            // 少しだけ待ってから自動的にカウントダウンを開始させる
+            setTimeout(() => {
+                triggerStartSequence();
+            }, 100);
+        });
+
+        // ==========================================
+        // カウントアップゲーム
+        // ==========================================
+        const clickPad = document.getElementById('click-pad');
+        const timerText = document.getElementById('timer-text');
+        
+        let score = 0;
+        let timeLeft = 30;
+        let gameTimerId;
+
+        function countUp() {
+            score++;
+            clickPad.textContent = score;
+            
+            clickPad.style.transform = 'scale(0.95)';
+            setTimeout(() => { clickPad.style.transform = 'scale(1)'; }, 500);
+        }
+
+        clickPad.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            countUp();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (gameScreen.style.display === 'flex' && !e.ctrlKey && e.key !== 'F12') {
+                countUp();
+            }
+        });
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            clickPad.textContent = score;
+            timerText.textContent = `残り時間: ${timeLeft}秒`;
+
+            gameTimerId = setInterval(() => {
+                timeLeft--;
+                timerText.textContent = `残り時間: ${timeLeft}秒`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimerId);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameScreen.style.display = 'none';
+            resultScreen.style.display = 'flex';
+            document.getElementById('result-score').textContent = `${score} 回叩いた！`;
+        }
+    </script>
+</body>
+</html>
