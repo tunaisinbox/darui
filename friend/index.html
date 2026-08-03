@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friend Codes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- カスタムピンクマウスカーソル -->
+  <div id="custom-cursor"></div>
+
+  <!-- 初回ローディング画面 (初期ベースは真っ黒) -->
+  <div id="first-loading-screen">
+    <!-- 端からロゴに向かって白く塗りつぶすカバー -->
+    <div class="white-cover-overlay" id="white-cover"></div>
+    
+    <div class="first-loading-content">
+      <div class="logo-container" id="logo-box">
+        <img src="" id="app-logo-img" class="logo-img" alt="Logo">
+      </div>
+      <div class="first-load-bar-track" id="first-bar-track">
+        <div class="first-load-bar-fill" id="first-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 検索時ローディング画面 -->
+  <div id="search-loading-screen">
+    <div class="search-load-wrapper">
+      <div class="search-icon-anim" id="search-icon-anim">🔍</div>
+      <div class="search-bar-track" id="search-bar-track">
+        <div class="search-bar-fill" id="search-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 背景動画 -->
+  <div class="video-background-container">
+    <video id="bg-video" autoplay loop muted playsinline disablepictureinpicture controlslist="nodownload">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-23141-large.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div id="toast-notification"></div>
+
+  <!-- メインコンテンツ -->
+  <main class="main-container">
+    <div class="top-nav">
+      <a href="#" id="home-link" class="nav-btn">ホームへ戻る</a>
+      <button id="lang-toggle-btn" class="lang-btn">
+        🌐 <span id="lang-btn-text">English</span>
+      </button>
+    </div>
+
+    <header class="glass-header">
+      <h1 id="header-title">Friend Codes</h1>
+      
+      <!-- 検索用入力 -->
+      <div class="custom-input-wrapper">
+        <input type="text" 
+               id="search-input" 
+               class="custom-input-field" 
+               placeholder="検索..." 
+               autocomplete="off" 
+               autocorrect="off" 
+               autocapitalize="off" 
+               spellcheck="false"
+               readonly
+               onfocus="this.removeAttribute('readonly');">
+      </div>
+    </header>
+
+    <ul id="friend-list" class="friend-list-group"></ul>
+      <p>©︎ 2023 tunaisinbox. All rights reserved.</p>
+  </main>
+
+  <!-- パスワード入力モーダル -->
+  <div id="password-modal" class="modal-overlay">
+    <div class="modal-content water-drop-ui">
+      <h3 id="modal-title">パスワード認証</h3>
+      <p id="modal-desc">非公開コードを表示するにはパスワードを入力してください。</p>
+      
+      <div class="custom-input-wrapper" style="margin: 20px 0;">
+        <input type="password" 
+               id="modal-password-input" 
+               class="custom-input-field" 
+               placeholder="パスワード" 
+               autocomplete="new-password" 
+               autocorrect="off" 
+               autocapitalize="off" 
+               spellcheck="false"
+               readonly
+               onfocus="this.removeAttribute('readonly');">
+      </div>
+
+      <div class="modal-buttons">
+        <button id="modal-cancel-btn" class="btn-modal btn-secondary">キャンセル</button>
+        <button id="modal-submit-btn" class="btn-modal btn-primary">確認</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
