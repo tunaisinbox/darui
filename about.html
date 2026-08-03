@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★寄付をするとどうなるの?★</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "MS UI Gothic", "Comic Sans MS", sans-serif;
+      background: #000000;
+      color: #00ff00;
+      padding: 30px 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      animation: bgPulse 1s infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% { background-color: #000000; }
+      100% { background-color: #1a001a; }
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #000066;
+      border: 6px double #ff00ff;
+      padding: 25px;
+      box-shadow: 0 0 40px #00ffff;
+      position: relative;
+      animation: containerSpin 10s infinite linear alternate;
+    }
+
+    @keyframes containerSpin {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(1deg) scale(1.01); }
+      100% { transform: rotate(-1deg); }
+    }
+
+    h1 {
+      color: #ffff00;
+      font-size: 2.2rem;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 3px 3px 0px #ff0000;
+      border-bottom: 4px dashed #00ffff;
+      padding-bottom: 10px;
+      animation: titleBlink 0.3s infinite alternate;
+    }
+
+    @keyframes titleBlink {
+      0% { opacity: 1; }
+      100% { opacity: 0.7; color: #ff00ff; }
+    }
+
+    .intro-text {
+      font-size: 1.1rem;
+      color: #ffffff;
+      background: #000;
+      border: 2px inset #00ff00;
+      padding: 12px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .use-case-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .use-case-card {
+      background: #000033;
+      border: 3px ridge #ffff00;
+      padding: 15px;
+      box-shadow: 5px 5px 0px #ff0000;
+      transition: transform 0.2s;
+    }
+
+    .use-case-card:hover {
+      transform: scale(1.05) rotate(-1deg);
+      background: #330033;
+    }
+
+    .use-case-card h2 {
+      font-size: 1.3rem;
+      color: #00ffff;
+      margin-bottom: 8px;
+      text-shadow: 1px 1px 0px #000;
+    }
+
+    .use-case-card p {
+      font-size: 1rem;
+      color: #ffffff;
+    }
+
+    .btn-back {
+      display: block;
+      width: 240px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #ff0000 0%, #ffff00 100%);
+      color: #000000;
+      text-decoration: none;
+      padding: 15px;
+      border: 4px outset #ffffff;
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+      box-shadow: 0 0 20px #ffff00;
+      animation: backBtnRave 0.2s infinite alternate;
+    }
+
+    @keyframes backBtnRave {
+      0% { transform: scale(1); filter: hue-rotate(0deg); }
+      100% { transform: scale(1.08); filter: hue-rotate(180deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 id="page-title">Loading...</h1>
+    <p id="page-intro" class="intro-text"></p>
+
+    <div id="use-cases-container" class="use-case-list"></div>
+
+    <a href="index.html" id="back-link" class="btn-back">≪ 寄付画面へ戻る ≪</a>
+  </div>
+
+  <script>
+    // --------------------------------------------------
+    // コンフィグ（文章設定）
+    // --------------------------------------------------
+    const PAGE_CONFIG = {
+      title: "★寄付をするとどうなるの！？★",
+      intro: "主のモチベが高くなり投稿頻度が上がります！！",
+      useCases: [
+        {
+          heading: " 1. 主の金欠回避",
+          description: "主が金欠で死なないように、あなたの寄付が主の命を救います！"
+        },
+        {
+          heading: " 2. ばかみたいに喜ぶ",
+          description: "寄付をすると主が狂ったように喜びます！"
+        },
+        {
+          heading: " 3. 寄付金は大事に使われます",
+          description: "信じてよね?????"
+        }
+      ]
+    };
+
+    // 音声再生
+    function playSound() {
+      try {
+        const audio = new Audio('sound.mp3');
+        audio.volume = 0.6;
+        audio.play().catch(e => {});
+      } catch(e) {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("page-title").textContent = PAGE_CONFIG.title;
+      document.getElementById("page-intro").textContent = PAGE_CONFIG.intro;
+
+      const container = document.getElementById("use-cases-container");
+      container.innerHTML = "";
+
+      PAGE_CONFIG.useCases.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "use-case-card";
+        
+        card.innerHTML = `
+          <h2>${item.heading}</h2>
+          <p>${item.description}</p>
+        `;
+
+        card.addEventListener('click', () => {
+          playSound();
+        });
+
+        container.appendChild(card);
+      });
+
+      document.getElementById("back-link").addEventListener("click", () => {
+        playSound();
+      });
+    });
+  </script>
+</body>
+</html>

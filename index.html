@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★☆★ 乞食 ★☆★</title>
+  <style>
+    :root {
+      --primary-color: #0000ff; /* 平成感のある原色に近い青 */
+      --rainbow-grad: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "MS UI Gothic", "Comic Sans MS", "Arial", sans-serif; /* ダサいフォント指定 */
+      background: #000033;
+      color: #00ffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+      /* 背景狂気パターン */
+      animation: retroBg 0.2s infinite alternate;
+    }
+
+    @keyframes retroBg {
+      0% { background-color: #000033; }
+      50% { background-color: #001144; }
+      100% { background-color: #110033; }
+    }
+
+    /* ダサい流れるテロップ */
+    .marquee-banner {
+      width: 100%;
+      background: red;
+      color: yellow;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 8px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      border-bottom: 3px dashed yellow;
+    }
+
+    .marquee-inner {
+      display: inline-block;
+      animation: marquee 8s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* メインカード（激ダサ立体枠線） */
+    .donation-card {
+      background: #000080;
+      border: 8px ridge #00ffff;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #ff00ff, inset 0 0 15px #00ffff;
+      width: 100%;
+      max-width: 520px;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      margin-top: 40px;
+      animation: cardRave 3s infinite ease-in-out alternate;
+    }
+
+    @keyframes cardRave {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.02) rotate(1deg) translateY(-3px); }
+      75% { transform: scale(0.98) rotate(-1deg) translateY(3px); }
+      100% { transform: scale(1.01) rotate(0.5deg); }
+    }
+
+    /* 虹色ダサタイトル */
+    h1 {
+      font-size: 2rem;
+      background: var(--rainbow-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 0px #000;
+      animation: rainbowMove 1s linear infinite, shake 0.1s infinite alternate;
+    }
+
+    @keyframes rainbowMove {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px); }
+      100% { transform: translate(-1px, -1px); }
+    }
+
+
+
+    p.description {
+      font-size: 0.95rem;
+      color: #ffffff;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    /* ダサい点滅リンク */
+    .info-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #ffff00;
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-decoration: underline;
+      animation: blink 0.4s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0.2; transform: scale(1.1); }
+    }
+
+    /* 金額ボタンエリア */
+    .amount-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* 超絶ダサい立体感爆発ボタン */
+    .btn-amount {
+      background: linear-gradient(180deg, #00ffff 0%, #0000ff 100%);
+      border: 4px outset #ffffff;
+      color: #ffffff;
+      padding: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-shadow: 2px 2px 0px #000;
+      box-shadow: 4px 4px 0px #000;
+      animation: btnJiggle 2s infinite ease-in-out;
+    }
+
+    .btn-amount:nth-child(even) { animation-delay: 1s; }
+
+    @keyframes btnJiggle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04) rotate(-1deg); }
+    }
+
+    .btn-amount:hover {
+      background: linear-gradient(180deg, #ff00ff 0%, #880088 100%);
+      border-style: inset;
+      transform: scale(1.1) !important;
+    }
+
+    .btn-amount.selected {
+      background: linear-gradient(180deg, #00ff00 0%, #006600 100%);
+      border-color: #ffff00;
+      animation: selectedRave 0.15s infinite alternate;
+    }
+
+    @keyframes selectedRave {
+      0% { box-shadow: 0 0 20px #00ff00; }
+      100% { box-shadow: 0 0 30px #ffff00; }
+    }
+
+    /* 注意事項ボックス（レトロなウインドウ風） */
+    .terms-box {
+      background: #c0c0c0;
+      color: #000;
+      border: 3px inset #ffffff;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 15px;
+      max-height: 90px;
+      overflow-y: scroll;
+    }
+
+    .terms-box strong {
+      color: #000080;
+    }
+
+    /* 同意チェックボックス（激しい主張） */
+    .agreement-container {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1rem;
+      color: #ffff00;
+      cursor: pointer;
+      animation: pulseText 0.8s infinite alternate;
+    }
+
+    @keyframes pulseText {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); color: #ff00ff; }
+    }
+
+    .agreement-container input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    /* 寄付ボタン（超カオス仕様） */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(180deg, #ff0000 0%, #880000 100%);
+      color: #ffff00;
+      border: 5px outset #ff00ff;
+      padding: 16px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-shadow: 2px 2px 0px #000;
+      box-shadow: 0 0 15px #ff0000;
+    }
+
+    .btn-submit:disabled {
+      background: #555555;
+      color: #888888;
+      border-color: #333333;
+      cursor: not-allowed;
+      box-shadow: none;
+      animation: none;
+    }
+
+    .btn-submit:not(:disabled) {
+      animation: submitChaos 0.2s infinite linear;
+    }
+
+    @keyframes submitChaos {
+      0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+      50% { transform: scale(1.06) rotate(-2deg); filter: hue-rotate(180deg); }
+      100% { transform: scale(0.98) rotate(2deg); filter: hue-rotate(360deg); }
+    }
+
+    /* 右下に超小さく鎮座する10000円ボタン（※今度は逃げないで押せる！） */
+    .btn-tiny-secret {
+      position: fixed;
+      bottom: 5px;
+      right: 5px;
+      font-size: 0.45rem; /* 超ちっちゃい */
+      padding: 2px 4px;
+      background: #ff00ff;
+      color: #ffffff;
+      border: 1px solid #ffffff;
+      cursor: pointer;
+      z-index: 999;
+      opacity: 0.7;
+    }
+
+    .btn-tiny-secret:hover {
+      opacity: 1;
+      transform: scale(2); /* ホバーするとちょっと大きくなって押しやすくなる優しさ */
+      background: #00ff00;
+      color: #000000;
+    }
+
+    .btn-tiny-secret.selected {
+      background: #00ffff;
+      color: #000;
+      font-weight: bold;
+      opacity: 1;
+    }
+
+    /* 画面を舞うダサ爆発パーティクル */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-weight: bold;
+      font-size: 1.5rem;
+      animation: particleFly 1.2s forwards ease-out;
+    }
+
+    @keyframes particleFly {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(3) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ダサい流れる文字 -->
+  <div class="marquee-banner">
+    <div class="marquee-inner">
+      ★☆★ ［緊急支援］あなたの1ポチが主を救う！？ 世紀末爆裂寄付フェスティバル開催中！！！ 今すぐチェック！！ ★☆★
+    </div>
+  </div>
+
+  <div class="donation-card">
+    <h1>神熱！寄付ゾーン</h1>
+    
+
+
+    <p class="description">※これから戻ることは不可能です</p>
+    
+    <a href="about.html" class="info-link">＞＞ 寄付をするとどうなるの！？（衝撃の真実） ＜＜</a>
+
+    <div id="amount-buttons-container" class="amount-buttons"></div>
+
+    <div class="terms-box">
+      <strong>【※絶対にお読みください※】</strong>
+      <ul>
+        <li>寄付後の返金は神に誓って不可能です。</li>
+        <li>寄付をすると地球温暖化が0.1%回復します</li>
+        <li>寄付をしてくれたら大変喜びます</li>
+        <li>寄付はPayPayでできます</li>
+        <li>もしリンクが切れてたらお問い合わせで更新しろゴルァと送信してください</li>
+      </ul>
+    </div>
+
+    <label class="agreement-container">
+      <input type="checkbox" id="agree-checkbox">
+      <span>上記の注意事項に同意します！！</span>
+    </label>
+
+    <button type="button" id="submit-btn" class="btn-submit" disabled>
+      金額を選択してください
+    </button>
+  </div>
+
+  <div id="secret-buttons-container"></div>
+
+  <script>
+    // --------------------------------------------------
+    // 設定（コンフィグ）
+    // --------------------------------------------------
+    const DONATION_CONFIG = {
+      amounts: [
+        { amount: 200, label: "200円", redirectUrl: "https://link.tunaisinbox.f5.si/paypay200yen" },
+        { amount: 500, label: "500円", redirectUrl: "https://link.tunaisinbox.f5.si/paypay500yen" },
+        { amount: 1000, label: "1,000円", redirectUrl: "https://link.tunaisinbox.f5.si/paypay1000yen" },
+        { amount: 5000, label: "5,000円", redirectUrl: "https://link.tunaisinbox.f5.si/paypay5000yen" },
+        // 右下の超ちっちゃい10,000円（※今回は逃げずにちゃんと押せます！）
+        { amount: 10000, label: "10000円", redirectUrl: "https://link.tunaisinbox.f5.si/paypay10000yen", isSecret: true }
+      ]
+    };
+
+    // 効果音 (sound.mp3) の読み込み処理
+    function playExplosionSound() {
+      try {
+        const audio = new Audio('sound.mp3');
+        audio.volume = 0.8;
+        audio.play().catch(e => console.log("オーディオ再生ブロック:", e));
+      } catch (e) {
+        console.log("音源の読み込みエラー", e);
+      }
+    }
+
+    let selectedItem = null;
+    const amountContainer = document.getElementById('amount-buttons-container');
+    const secretContainer = document.getElementById('secret-buttons-container');
+    const agreeCheckbox = document.getElementById('agree-checkbox');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // --------------------------------------------------
+    // 金額ボタンの生成
+    // --------------------------------------------------
+    DONATION_CONFIG.amounts.forEach(item => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = item.label;
+
+      if (item.isSecret) {
+        button.className = 'btn-tiny-secret btn-amount-item';
+        secretContainer.appendChild(button);
+      } else {
+        button.className = 'btn-amount btn-amount-item';
+        amountContainer.appendChild(button);
+      }
+
+      button.addEventListener('click', (e) => {
+        // 爆発音を再生！
+        playExplosionSound();
+
+        document.querySelectorAll('.btn-amount-item').forEach(b => b.classList.remove('selected'));
+        button.classList.add('selected');
+        selectedItem = item;
+
+        // 画面シェイク＆爆発文字発生
+        shakeScreen(item.isSecret ? 30 : 10);
+        spawnParticles(e.clientX, e.clientY, item.isSecret ? "💥THX💥" : "💥DONATION💥");
+
+        updateSubmitButtonState();
+      });
+    });
+
+    agreeCheckbox.addEventListener('change', () => {
+      playExplosionSound();
+      if (agreeCheckbox.checked) {
+        spawnParticles(window.innerWidth / 2, window.innerHeight / 2, "💥");
+      }
+      updateSubmitButtonState();
+    });
+
+    function updateSubmitButtonState() {
+      const isAgreed = agreeCheckbox.checked;
+
+      if (selectedItem && isAgreed) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = `🔥 ${Number(selectedItem.amount).toLocaleString()}円を乞食野郎に寄付する！ 🔥`;
+      } else {
+        submitBtn.disabled = true;
+        if (!selectedItem) {
+          submitBtn.textContent = "金額を選択してください";
+        } else if (!isAgreed) {
+          submitBtn.textContent = "注意事項に同意してください";
+        }
+      }
+    }
+
+    // 画面揺れ演出
+    function shakeScreen(intensity = 10) {
+      let count = 0;
+      const interval = setInterval(() => {
+        const rx = (Math.random() - 0.5) * intensity;
+        const ry = (Math.random() - 0.5) * intensity;
+        document.body.style.transform = `translate(${rx}px, ${ry}px)`;
+        count++;
+        if (count > 12) {
+          clearInterval(interval);
+          document.body.style.transform = 'translate(0, 0)';
+        }
+      }, 25);
+    }
+
+    // 爆発パーティクル
+    function spawnParticles(x, y, text) {
+      for (let i = 0; i < 12; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = text;
+        p.style.left = `${x}px`;
+        p.style.top = `${y}px`;
+        p.style.color = ['#ff0000', '#00ff00', '#ffff00', '#ff00ff', '#00ffff'][Math.floor(Math.random() * 5)];
+
+        const dx = (Math.random() - 0.5) * 400;
+        const dy = (Math.random() - 0.5) * 400;
+        p.style.setProperty('--dx', `${dx}px`);
+        p.style.setProperty('--dy', `${dy}px`);
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1200);
+      }
+    }
+
+    // 送信ボタンクリック時の最終大爆発リダイレクト
+    submitBtn.addEventListener('click', () => {
+      if (!submitBtn.disabled && selectedItem && selectedItem.redirectUrl) {
+        playExplosionSound();
+        
+        // 超連続爆発
+        for(let i=0; i<5; i++) {
+          setTimeout(() => {
+            playExplosionSound();
+            shakeScreen(40);
+            spawnParticles(Math.random() * window.innerWidth, Math.random() * window.innerHeight, "💣BIG BANG💣");
+          }, i * 150);
+        }
+
+        document.body.style.transition = "all 1s ease-in";
+        document.body.style.transform = "scale(0) rotate(1440deg)";
+        document.body.style.filter = "invert(100%)";
+
+        setTimeout(() => {
+          window.location.href = selectedItem.redirectUrl;
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>
