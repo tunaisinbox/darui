@@ -3,334 +3,867 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>お問い合わせフォーム</title>
+  <title>Profile Page</title>
   <style>
-    /* ==============================================
-       カラーパレット & デザイン変数
-       ============================================== */
-    :root {
-      --color-main: #99AABB;         /* メインカラー */
-      --color-main-hover: #8899AA;   /* ホバー時メイン */
-      --color-highlight: #E2E8F0;    /* ハイライト */
-      --color-shadow: #B0C4DE;       /* シャドウ / アクセント */
-      --color-bg: #F0F4F8;           /* 白っぽいちょっと黒い水色 */
-      --color-card-bg: #FFFFFF;      /* カード背景 */
-      --color-text: #2D3748;         /* 主テキスト（見やすさ重視） */
-      --color-text-muted: #64748B;   /* 補足テキスト */
-      --color-error: #E53E3E;        /* エラー色 */
-      --radius-lg: 16px;
-      --radius-md: 10px;
-      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* ==============================================
-       ベーススタイル
-       ============================================== */
+    /* ================================================== */
+    /* 基礎リセット・マウスカーソル完全非表示化 */
+    /* ================================================== */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* PC環境下では画面の下部や端も含めて、全ての要素のデフォルトカーソルを強制非表示 */
+    @media (hover: hover) and (pointer: fine) {
+      *, *::before, *::after, html, body {
+        cursor: none !important;
+      }
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--color-bg);
-      color: var(--color-text);
-      min-height: 100vh;
+      background: #000;
+      color: #fff;
+      height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      position: relative;
+      user-select: none;
+    }
+
+    /* ================================================== */
+    /* ローディング画面 (漆黒→白円形展開) */
+    /* ================================================== */
+    #first-loading-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-color: #000000;
+      z-index: 90000;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 2rem 1rem;
-      line-height: 1.6;
-    }
-
-    /* ==============================================
-       カードコンテナ & アニメーション
-       ============================================== */
-    .form-card {
-      background: var(--color-card-bg);
-      width: 100%;
-      max-width: 560px;
-      padding: 2.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      /* 立体感のあるソフトな二重シャドウ */
-      box-shadow: 
-        0 10px 30px -5px rgba(176, 196, 222, 0.3),
-        0 20px 25px -5px rgba(153, 170, 187, 0.15);
-      animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
       overflow: hidden;
+      pointer-events: auto;
     }
 
-    /* カード上部のアクセントライン */
-    .form-card::before {
+    .white-cover-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffffff;
+      clip-path: circle(0% at 50% 50%);
+      z-index: 1;
+    }
+
+    .white-cover-overlay.shrink-in {
+      animation: shrinkFromEdge 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes shrinkFromEdge {
+      0% { clip-path: circle(0% at 50% 50%); }
+      100% { clip-path: circle(150% at 50% 50%); }
+    }
+
+    #first-loading-screen.smooth-fade-out {
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      pointer-events: none;
+    }
+
+    .first-loading-content {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 0.5s ease;
+    }
+
+    /* 吹き出し (共通スタイル) */
+    .fukidashi {
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      background: #ffffff;
+      color: #333333;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid #e0e0e0;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .fukidashi::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: #ffffff;
+    }
+    .fukidashi.show {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+    }
+
+    .logo-container {
+      width: 110px;
+      height: 110px;
+      margin-bottom: 25px;
+      transform: scale(0);
+      opacity: 0;
+      position: relative; /* 吹き出しの基準 */
+    }
+
+    .logo-container.pop-in {
+      animation: pyokonLogo 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.4) forwards;
+    }
+
+    @keyframes pyokonLogo {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .logo-img {
       width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      object-fit: cover;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      cursor: none; /* カーソル消去 */
+    }
+
+    .first-load-bar-track {
+      width: 220px;
       height: 6px;
-      background: linear-gradient(90deg, var(--color-main), var(--color-shadow), var(--color-highlight));
-    }
-
-    .form-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 1.5rem;
-      text-align: center;
-      letter-spacing: 0.05em;
-    }
-
-    /* ==============================================
-       注意事項エリア (CONFIGで流し込み)
-       ============================================== */
-    .notice-box {
-      background-color: #F8FAFC;
-      border-left: 4px solid var(--color-shadow);
-      padding: 1rem 1.25rem;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      margin-bottom: 2rem;
-      font-size: 0.9rem;
-      color: var(--color-text-muted);
-      animation: fadeIn 1s ease-out 0.2s both;
-    }
-
-    .notice-box h3 {
-      font-size: 0.95rem;
-      color: var(--color-text);
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .notice-box ul {
-      padding-left: 1.2rem;
-    }
-
-    .notice-box li {
-      margin-bottom: 0.25rem;
-    }
-
-    /* ==============================================
-       フォーム要素
-       ============================================== */
-    .form-group {
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    .form-label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-      color: var(--color-text);
-      transition: var(--transition-smooth);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      font-size: 1rem;
-      color: var(--color-text);
-      background-color: #FAFCFF;
-      border: 2px solid var(--color-highlight);
-      border-radius: var(--radius-md);
-      outline: none;
-      transition: var(--transition-smooth);
-      resize: vertical;
-    }
-
-    /* 入力エリアフォーカス時のアニメーション */
-    .form-control:focus {
-      background-color: #FFFFFF;
-      border-color: var(--color-main);
-      box-shadow: 0 0 0 4px rgba(153, 170, 187, 0.25);
-      transform: translateY(-2px);
-    }
-
-    .form-control::placeholder {
-      color: #A0AEC0;
-    }
-
-    textarea.form-control {
-      min-height: 140px;
-    }
-
-    /* ==============================================
-       送信ボタン & インタラクション
-       ============================================== */
-    .btn-submit {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      background-color: var(--color-main);
-      border: none;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: var(--transition-smooth);
-      box-shadow: 0 4px 12px rgba(153, 170, 187, 0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
       overflow: hidden;
+      position: relative;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
-    /* リップル（波紋）用 */
-    .btn-submit::after {
-      content: '';
+    .first-load-bar-track.show {
+      opacity: 1;
+    }
+
+    .first-load-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #c3d9f0;
+      box-shadow: 0 0 10px #E2ECF7;
+      border-radius: 10px;
+      /* JSでtransitionを操作します */
+    }
+
+    /* ================================================== */
+    /* エラー演出用スタイル (読み込み後エラー・10回失敗時) */
+    /* ================================================== */
+
+    /* 上下白背景スライド (読み込み後エラー用) */
+    .err-bg {
+      position: fixed;
+      left: 0; width: 100vw; height: 50vh;
+      background: #ffffff;
+      z-index: 90001;
+      transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+      pointer-events: none;
+    }
+    #err-white-top { top: 0; transform: translateY(-100%); }
+    #err-white-bottom { bottom: 0; transform: translateY(100%); }
+    .err-bg.show { transform: translateY(0); }
+
+    /* エラー演出コンテナ (読み込み後) */
+    #err-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 90002; pointer-events: none; overflow: hidden;
+    }
+
+    #err-logo-box {
+      position: absolute;
+      top: -200px; /* 画面外(上) */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px; height: 110px;
+      transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #err-logo-box.move-center {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #err-text {
+      text-align: center;
+      color: #333;
+      font-weight: 700;
+      margin-top: 150px;
+      font-size: 1.1rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #err-text.show { opacity: 1; }
+
+    /* 致命的エラー (10回失敗・サポート誘導用) */
+    #fatal-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 99999; /* 最前面 */
+      pointer-events: none; overflow: hidden;
+    }
+
+    #fatal-logo-box {
       position: absolute;
       top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
+      left: -200px; /* 画面外(左) */
+      transform: translateY(-50%);
+      width: 120px; height: 120px;
+      transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: auto; /* クリック判定用 */
+    }
+    #fatal-logo-box.slide-in-left {
+      left: 60px; /* 画面左側に配置 */
+    }
+
+    /* サポートボタン */
+    .support-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #341f97;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: none !important; /* カスタムカーソルに任せる */
+    }
+    .support-btn:hover { background: #54a0ff; }
+
+    /* 爆発エフェクト */
+    .explode-anim {
+      animation: explodeEffect 0.6s forwards;
+      pointer-events: none;
+    }
+    @keyframes explodeEffect {
+      0% { transform: scale(1); filter: brightness(1); opacity: 1; }
+      30% { transform: scale(1.6); filter: brightness(2) contrast(1.5); }
+      100% { transform: scale(3.5); filter: blur(15px) brightness(3); opacity: 0; display: none; }
+    }
+
+
+    /* ================================================== */
+    /* カスタムマウスカーソル */
+    /* ================================================== */
+    #custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 22px; height: 22px;
+      background-color: #c3d9f0;
+      border: 2px solid #E2ECF7;
       border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
       transform: translate(-50%, -50%);
-      transition: width 0.6s ease-out, height 0.6s ease-out;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(226, 236, 247, 0.8);
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease, border-color 0.2s ease;
+      will-change: transform, left, top;
     }
 
-    .btn-submit:hover {
-      background-color: var(--color-main-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(153, 170, 187, 0.5);
+    #custom-cursor.hover {
+      transform: translate(-50%, -50%) scale(1.6);
+      background-color: #E2ECF7;
+      border-color: #ffffff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.7), 0 0 16px #E2ECF7;
     }
 
-    .btn-submit:active {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(153, 170, 187, 0.3);
+    #custom-cursor.active {
+      transform: translate(-50%, -50%) scale(0.85);
+      background-color: #a1c4e6;
     }
 
-    .btn-submit:active::after {
-      width: 300px;
-      height: 300px;
+    @media (hover: none), (pointer: coarse) {
+      #custom-cursor { display: none !important; }
+      body, a, button, input, select, textarea { cursor: auto !important; }
     }
 
-    /* ==============================================
-       キーフレームアニメーション
-       ============================================== */
-    @keyframes fadeInSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    /* ================================================== */
+    /* メインWebサイト用スタイル (前回のまま) */
+    /* ================================================== */
+    .bg-video-container {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -2; overflow: hidden; pointer-events: none;
+    }
+    .bg-video {
+      width: 100%; height: 100%; object-fit: cover; pointer-events: none;
+    }
+    .bg-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(10, 10, 15, 0.6); z-index: -1; pointer-events: none;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    /* (以下、既存のプロフィールCSSスタイル・一部省略せず記載) */
+    .hamburger-btn {
+      position: fixed; top: 20px; left: 20px; z-index: 1000;
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2); width: 48px; height: 48px;
+      border-radius: 12px; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; gap: 5px; transition: all 0.3s ease;
     }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-6px); }
-      40%, 80% { transform: translateX(6px); }
+    .hamburger-btn:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+    .hamburger-btn span {
+      width: 22px; height: 2px; background-color: #ffffff; border-radius: 2px; transition: all 0.3s ease;
     }
-
-    .shake {
-      animation: shake 0.4s ease-in-out;
+    .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+    .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .menu-drawer {
+      position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+      background: rgba(15, 15, 25, 0.88); backdrop-filter: blur(20px);
+      z-index: 999; padding: 80px 20px 30px; box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+      transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid rgba(255, 255, 255, 0.1); overflow-y: auto;
+    }
+    .menu-drawer.open { left: 0; }
+    .menu-section-header {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #8a8a9e; letter-spacing: 1px; margin: 20px 0 8px 12px;
+    }
+    .menu-drawer a {
+      display: flex; align-items: center; gap: 12px; color: #e0e0e0; text-decoration: none;
+      padding: 12px 14px; margin-bottom: 6px; border-radius: 10px; font-size: 0.95rem; font-weight: 500;
+      background: rgba(255, 255, 255, 0.05); transition: all 0.2s ease;
+    }
+    .menu-drawer a:hover { background: rgba(255, 255, 255, 0.2); color: #ffffff; transform: translateX(4px); }
+    .menu-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5);
+      z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .container { max-width: 720px; width: 100%; margin: 0 auto; padding: 80px 20px 60px; }
+    .card {
+      background: rgba(20, 20, 32, 0.65); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px; padding: 32px;
+      margin-bottom: 24px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3); word-break: break-word;
+    }
+    .profile-header { text-align: center; }
+    .avatar {
+      width: 130px; height: 130px; border-radius: 50%; object-fit: cover;
+      border: 4px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); margin-bottom: 16px;
+    }
+    .user-name { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    .details-row { display: flex; justify-content: center; gap: 12px; font-size: 0.95rem; color: #b0b0c0; margin-bottom: 16px; flex-wrap: wrap; }
+    .details-badge {
+      display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .bio { font-size: 1rem; line-height: 1.7; color: #e0e0e0; margin-top: 16px; text-align: left; user-select: text; }
+    .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+    .action-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 20px; border-radius: 14px; font-weight: 700; text-decoration: none; color: #ffffff;
+      transition: all 0.25s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .btn-donate { background: linear-gradient(135deg, #ff5252, #ff793f); }
+    .btn-support { background: linear-gradient(135deg, #341f97, #54a0ff); }
+    .action-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+    .section-title {
+      font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .sns-group { display: flex; flex-direction: column; gap: 10px; }
+    .sns-item {
+      display: flex; justify-content: space-between; align-items: center; padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.05); border-radius: 12px; text-decoration: none; color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s ease;
+    }
+    .sns-item:hover { background: rgba(255, 255, 255, 0.12); transform: translateX(4px); }
+    .sns-item-left { display: flex; align-items: center; gap: 10px; }
+    .sns-handle { font-size: 0.9rem; color: #a0a0b0; }
+    .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { padding: 6px 12px; border-radius: 8px; font-size: 0.88rem; font-weight: 500; }
+    .tag-like { background: rgba(46, 213, 115, 0.15); color: #7bed9f; border: 1px solid rgba(46, 213, 115, 0.3); }
+    .tag-dislike { background: rgba(255, 71, 87, 0.15); color: #ff6b81; border: 1px solid rgba(255, 71, 87, 0.3); }
+    @media (max-width: 600px) {
+      .container { padding: 70px 12px 40px; }
+      .card { padding: 20px 16px; border-radius: 18px; }
+      .action-group { grid-template-columns: 1fr; }
+      .user-name { font-size: 1.6rem; }
+      .avatar { width: 100px; height: 100px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="form-card">
-    <h1 class="form-title">お問い合わせ</h1>
+  <!-- ========================================== -->
+  <!-- UIオーバーレイ・ローディング・エラー関係 -->
+  <!-- ========================================== -->
 
-    <!-- JSで設定（CONFIG）した注意事項がここに入ります -->
-    <div class="notice-box" id="noticeBox">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        注意事項
-      </h3>
-      <ul id="noticeList"></ul>
-    </div>
-
-    <form id="contactForm">
-      <div class="form-group">
-        <label class="form-label" for="message">お問い合わせ内容</label>
-        <textarea 
-          id="message" 
-          class="form-control" 
-          placeholder="こちらにご質問やご要望を入力してください..." 
-          required
-        ></textarea>
+  <!-- 初回ローディング画面 -->
+  <div id="first-loading-screen">
+    <div class="white-cover-overlay" id="white-cover"></div>
+    <div class="first-loading-content">
+      <div class="logo-container" id="main-logo-box">
+        <img src="https://files.catbox.moe/lzbie4.png" id="app-logo-img" class="logo-img" alt="Logo">
+        <div id="loading-fukidashi" class="fukidashi">エラーが発生しました</div>
       </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">
-        <span>送信</span>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-      </button>
-    </form>
+      <div class="first-load-bar-track" id="first-bar-track">
+        <div class="first-load-bar-fill" id="first-bar-fill"></div>
+      </div>
+    </div>
   </div>
 
+  <!-- 読み込み後エラー用の白背景スライド -->
+  <div id="err-white-top" class="err-bg"></div>
+  <div id="err-white-bottom" class="err-bg"></div>
+
+  <!-- 読み込み後エラー用のUI -->
+  <div id="err-overlay">
+    <div id="err-logo-box">
+      <img src="https://files.catbox.moe/lzbie4.png" class="logo-img" alt="Logo">
+      <div id="err-fukidashi" class="fukidashi">エラーが発生しました</div>
+    </div>
+    <div id="err-text">再読み込みしています</div>
+  </div>
+
+  <!-- 10回失敗時(致命的エラー・サポート用) -->
+  <div id="fatal-overlay">
+    <div id="fatal-logo-box">
+      <img src="https://files.catbox.moe/lzbie4.png" id="fatal-logo-img" class="logo-img" alt="Logo">
+      <div id="fatal-fukidashi" class="fukidashi">
+        これをサポートサイトに送信してください<br>
+        <a href="https://tunaisinbox.f5.si/support" id="support-btn" class="support-btn" target="_blank" rel="noopener noreferrer">サポートへ移動する</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- カスタムマウスカーソル -->
+  <div id="custom-cursor"></div>
+
+  <!-- ========================================== -->
+  <!-- メインコンテンツ -->
+  <!-- ========================================== -->
+  <div class="bg-video-container">
+    <video id="bgVideo" class="bg-video" autoplay loop muted playsinline disablePictureInPicture></video>
+  </div>
+  <div class="bg-overlay"></div>
+
+  <div class="hamburger-btn" id="menuToggle">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="menu-drawer" id="menuDrawer"></nav>
+
+  <div class="container" id="profile-container">
+    <div class="card profile-header" id="profile">
+      <img id="userIcon" class="avatar" alt="Icon">
+      <h1 id="userName" class="user-name"></h1>
+      <div class="details-row">
+        <span class="details-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          誕生日: <strong id="userBirthday"></strong>
+        </span>
+        <span class="details-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          推し: <strong id="userOshi"></strong>
+        </span>
+      </div>
+      <p id="userBio" class="bio"></p>
+      <div id="actionButtons" class="action-group"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        SNS
+      </h2>
+      <div id="snsList" class="sns-group"></div>
+    </div>
+
+    <div class="card" id="likes-dislikes">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="#2ed573"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        好きなもの
+      </h2>
+      <div id="likeTags" class="tag-container" style="margin-bottom: 24px;"></div>
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="#ff4757"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        嫌いなもの
+      </h2>
+      <div id="dislikeTags" class="tag-container"></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+
   <script>
-    /* ==============================================
-       コンフィグ設定 (自由に書き換えてください)
-       ============================================== */
-    const CONFIG = {
-      // 送信先のメールアドレス
-      recipientEmail: "tunaisinsekai@gmail.com",
-
-      // 注意事項リスト
-      notices: [
-        "送信ボタンを押されたら、次の種目に同意したことになります",
-        "にんにんにんにんにんにんにんにんにんにんにんにんにんにんにん",
-        "営業や勧誘は一切受け付けておりません。送信1回ごとに地球温暖化が10％進行します。また送信5回ごとにあなたを食べに行きます🍴",
-        "当チャンネル、またはサイトやサービスは個人運営ですので、優しくしていただかないと心が折れて無視や、メールアドレスを晒すなどの行為をするかもしれません。"  ,
-        "怪文書や非常識な文章はAIがブロックするため届きません。",
-
-      ]
-    };
-
-    /* ==============================================
-       初期化処理
-       ============================================== */
     document.addEventListener("DOMContentLoaded", () => {
-      // 注意事項の書き込み
-      const noticeList = document.getElementById("noticeList");
-      CONFIG.notices.forEach(text => {
-        const li = document.createElement("li");
-        li.textContent = text;
-        noticeList.appendChild(li);
+      // ==================================================
+      // マウスカーソル & 右クリック→左クリック化処理
+      // ==================================================
+      const cursor = document.getElementById("custom-cursor");
+      let mouseX = -100, mouseY = -100;
+      let cursorX = -100, cursorY = -100;
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+      // 右クリックを強制的に左クリックイベントに変換
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        if (element) {
+          element.click();
+        }
       });
-    });
 
-    /* ==============================================
-       送信処理 (mailto: 生成)
-       ============================================== */
-    const form = document.getElementById("contactForm");
-    const messageInput = document.getElementById("message");
-    const formCard = document.querySelector(".form-card");
+      if (!isTouch) {
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        });
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+        function animateCursor() {
+          cursorX += (mouseX - cursorX) * 0.22;
+          cursorY += (mouseY - cursorY) * 0.22;
+          cursor.style.left = `${cursorX}px`;
+          cursor.style.top = `${cursorY}px`;
+          requestAnimationFrame(animateCursor);
+        }
+        requestAnimationFrame(animateCursor);
 
-      const messageValue = messageInput.value.trim();
-
-      if (!messageValue) {
-        // 未入力時はカードを揺らすアニメーション
-        formCard.classList.add("shake");
-        setTimeout(() => formCard.classList.remove("shake"), 400);
-        return;
+        document.addEventListener("mousedown", () => cursor.classList.add("active"));
+        document.addEventListener("mouseup", () => cursor.classList.remove("active"));
+        document.addEventListener("mouseover", (e) => {
+          if (e.target.closest("a, button, .hamburger-btn, .sns-item, .action-btn, .tag, .support-btn")) {
+            cursor.classList.add("hover");
+          }
+        });
+        document.addEventListener("mouseout", (e) => {
+          if (e.target.closest("a, button, .hamburger-btn, .sns-item, .action-btn, .tag, .support-btn")) {
+            cursor.classList.remove("hover");
+          }
+        });
       }
 
-      // 件名（Subject）は含めず、本文（Body）のみをURLエンコード
-      const mailtoUrl = `mailto:${CONFIG.recipientEmail}?body=${encodeURIComponent(messageValue)}`;
+      // ==================================================
+      // 状態管理・エラー処理・動画監視ロジック
+      // ==================================================
+      let isLoading = true;
+      let isHandlingError = false;
+      let errorCount = parseInt(sessionStorage.getItem('siteErrorCount')) || 0;
+      const video = document.getElementById("bgVideo");
 
-      // メールアプリを開く
-      window.location.href = mailtoUrl;
+      // デバイス情報取得 (OS_型番等)
+      function getDeviceInfo() {
+        const ua = navigator.userAgent;
+        let os = "Unknown";
+        if (ua.indexOf("Win") !== -1) os = "Windows";
+        else if (ua.indexOf("Mac") !== -1) os = "MacOS";
+        else if (ua.indexOf("X11") !== -1) os = "UNIX";
+        else if (ua.indexOf("Linux") !== -1) os = "Linux";
+        if (/Android/.test(ua)) os = "Android";
+        else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+        return `${os}_${navigator.platform}`;
+      }
+
+      // エラー発生のトリガー
+      function triggerError() {
+        if (isHandlingError) return;
+        isHandlingError = true;
+        errorCount++;
+        sessionStorage.setItem('siteErrorCount', errorCount);
+
+        if (errorCount >= 10) {
+          showFatalSupportError(true);
+          return;
+        }
+
+        if (isLoading) {
+          handleLoadingError();
+        } else {
+          handleRuntimeError();
+        }
+      }
+
+      // ① 読み込み途中でのエラー処理
+      function handleLoadingError() {
+        const fillBar = document.getElementById('first-bar-fill');
+        const trackBar = document.getElementById('first-bar-track');
+        const mainLogoBox = document.getElementById('main-logo-box');
+        const fukidashi = document.getElementById('loading-fukidashi');
+        
+        let currentWidth = parseFloat(fillBar.style.width) || 0;
+        
+        const executeAnim = () => {
+          fillBar.style.width = '0%';
+          setTimeout(() => {
+            // ぴょこって上に跳ねる
+            mainLogoBox.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27)';
+            mainLogoBox.style.transform = 'scale(1) translateY(-25px)';
+            
+            setTimeout(() => {
+              mainLogoBox.style.transform = 'scale(1) translateY(0)';
+              // 跳ねた後に吹き出し
+              fukidashi.classList.add('show');
+              
+              setTimeout(() => {
+                window.location.hash = '#error';
+                window.location.reload();
+              }, 1500);
+            }, 300);
+          }, 300);
+        };
+
+        // バーが表示されていて、半分進んでいない場合
+        if (trackBar.classList.contains('show') && currentWidth < 50) {
+          fillBar.style.transition = 'width 0.4s ease';
+          fillBar.style.width = '50%';
+          setTimeout(executeAnim, 500);
+        } else {
+          executeAnim();
+        }
+      }
+
+      // ② 読み込み完了後のエラー処理
+      function handleRuntimeError() {
+        document.getElementById('err-white-top').classList.add('show');
+        document.getElementById('err-white-bottom').classList.add('show');
+        
+        const errOverlay = document.getElementById('err-overlay');
+        const errLogoBox = document.getElementById('err-logo-box');
+        const errFuki = document.getElementById('err-fukidashi');
+        const errText = document.getElementById('err-text');
+        
+        errOverlay.style.display = 'block';
+        
+        // 少し待ってから画面外からロゴ飛来
+        setTimeout(() => {
+          errLogoBox.classList.add('move-center');
+          
+          setTimeout(() => {
+            // 到着後、吹き出し
+            errFuki.classList.add('show');
+            
+            setTimeout(() => {
+              errText.classList.add('show'); // 再読み込みテキスト
+              setTimeout(() => {
+                window.location.hash = '#error';
+                window.location.reload();
+              }, 1500);
+            }, 500);
+          }, 600);
+        }, 300);
+      }
+
+      // ③ 10回失敗時の致命的エラー処理 (サポート誘導)
+      function showFatalSupportError(needRedirect) {
+        isLoading = false;
+        document.getElementById('first-loading-screen').style.display = 'none';
+        
+        if (needRedirect) {
+          window.location.hash = '#siteerror-' + encodeURIComponent(getDeviceInfo());
+        }
+
+        const fatalOverlay = document.getElementById('fatal-overlay');
+        const fatalLogoBox = document.getElementById('fatal-logo-box');
+        const fatalFuki = document.getElementById('fatal-fukidashi');
+        const fatalLogoImg = document.getElementById('fatal-logo-img');
+
+        fatalOverlay.style.display = 'block';
+
+        // 画面外(左)から出てくる
+        setTimeout(() => {
+          fatalLogoBox.classList.add('slide-in-left');
+          setTimeout(() => {
+            fatalFuki.classList.add('show');
+          }, 600);
+        }, 100);
+
+        // PCエンターキー対応
+        document.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter') {
+            document.getElementById('support-btn').click();
+          }
+        });
+
+        // ロゴクリックで爆発＋音声
+        fatalLogoImg.addEventListener('click', () => {
+          const audio = new Audio('error.mp3');
+          audio.play().catch(e=>console.log(e)); // ブラウザ制限回避用
+          fatalLogoImg.classList.add('explode-anim');
+        });
+      }
+
+      // ビデオ停止監視ロジック
+      let lastVideoTime = -1;
+      setInterval(() => {
+        if(isHandlingError || isLoading) return;
+        if(!video.paused) {
+          if(video.currentTime === lastVideoTime) {
+            triggerError(); // 時間が進んでいない＝バグって止まった
+          }
+          lastVideoTime = video.currentTime;
+        }
+      }, 1500); // 1.5秒ごとに監視
+
+      video.addEventListener('error', triggerError);
+      video.addEventListener('stalled', triggerError);
+
+
+      // ==================================================
+      // URLハッシュ初期ロード判定と通常アニメーション
+      // ==================================================
+      const firstLoadingScreen = document.getElementById("first-loading-screen");
+      const whiteCover = document.getElementById("white-cover");
+      const mainLogoBox = document.getElementById("main-logo-box");
+      const firstBarTrack = document.getElementById("first-bar-track");
+      const firstBarFill = document.getElementById("first-bar-fill");
+      const loadingFuki = document.getElementById("loading-fukidashi");
+      const appLogoImg = document.getElementById("app-logo-img");
+
+      if (window.location.hash.startsWith('#siteerror')) {
+        // 10回失敗済み状態
+        showFatalSupportError(false);
+      } else if (window.location.hash === '#error') {
+        // リロード後のエラー継続状態
+        firstLoadingScreen.style.backgroundColor = '#ffffff';
+        whiteCover.style.display = 'none'; // 黒背景をスキップ
+        
+        mainLogoBox.style.transform = 'scale(1)';
+        mainLogoBox.style.opacity = '1';
+        firstBarTrack.style.opacity = '1';
+        
+        // 吹き出しを最初から表示
+        loadingFuki.classList.add('show');
+        
+        // ロード進行を再開 (少し遅延させて進行)
+        setTimeout(() => {
+          firstBarFill.style.transition = 'width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
+          firstBarFill.style.width = "100%";
+          completeLoading();
+        }, 500);
+      } else {
+        // 通常の初回ローディング
+        function startLoading() {
+          setTimeout(() => { mainLogoBox.classList.add("pop-in"); }, 200);
+          setTimeout(() => { whiteCover.classList.add("shrink-in"); }, 600);
+          setTimeout(() => {
+            firstBarTrack.classList.add("show");
+            setTimeout(() => {
+              firstBarFill.style.transition = 'width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
+              firstBarFill.style.width = "100%";
+            }, 50);
+          }, 1100);
+          completeLoading();
+        }
+
+        if (appLogoImg.complete) {
+          startLoading();
+        } else {
+          appLogoImg.onload = startLoading;
+          appLogoImg.onerror = startLoading;
+        }
+      }
+
+      function completeLoading() {
+        setTimeout(() => {
+          if(isHandlingError) return;
+          isLoading = false;
+          firstLoadingScreen.classList.add("smooth-fade-out");
+          
+          setTimeout(() => {
+            firstLoadingScreen.style.display = "none";
+            if (!isTouch) cursor.style.opacity = "1";
+            
+            // 正常にロード完了し、ビデオが再生し始めたらエラーカウントリセット
+            setTimeout(() => {
+              if(!isHandlingError && !video.paused) {
+                errorCount = 0;
+                sessionStorage.setItem('siteErrorCount', 0);
+              }
+            }, 4000);
+          }, 800);
+        }, 2700);
+      }
+
+
+      // ==================================================
+      // サイトプロフィールのデータバインディング (前回のまま)
+      // ==================================================
+      const cfg = SITE_CONFIG;
+      video.src = cfg.bgVideoUrl;
+
+      const playVideo = () => {
+        video.play().catch(() => {
+          document.addEventListener('click', () => video.play(), { once: true });
+        });
+      };
+      playVideo();
+
+      document.getElementById("userIcon").src = cfg.iconUrl;
+      document.getElementById("userName").textContent = cfg.name;
+      document.getElementById("userBirthday").textContent = cfg.birthday;
+      document.getElementById("userOshi").textContent = cfg.oshi;
+      document.getElementById("userBio").textContent = cfg.bio;
+
+      const actionGroup = document.getElementById("actionButtons");
+      cfg.actionButtons.forEach(btn => {
+        const a = document.createElement("a");
+        a.href = btn.url;
+        a.className = `action-btn ${btn.class}`;
+        a.innerHTML = `${btn.svgIcon} <span>${btn.label}</span>`;
+        a.target = "_blank"; a.rel = "noopener noreferrer";
+        actionGroup.appendChild(a);
+      });
+
+      const snsGroup = document.getElementById("snsList");
+      cfg.sns.forEach(sns => {
+        const a = document.createElement("a");
+        a.href = sns.url;
+        a.className = "sns-item";
+        a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.innerHTML = `<div class="sns-item-left">${sns.svgIcon}<strong>${sns.name}</strong></div><span class="sns-handle">${sns.handle}</span>`;
+        snsGroup.appendChild(a);
+      });
+
+      const likeContainer = document.getElementById("likeTags");
+      cfg.likes.forEach(item => {
+        const span = document.createElement("span"); span.className = "tag tag-like"; span.textContent = item;
+        likeContainer.appendChild(span);
+      });
+
+      const dislikeContainer = document.getElementById("dislikeTags");
+      cfg.dislikes.forEach(item => {
+        const span = document.createElement("span"); span.className = "tag tag-dislike"; span.textContent = item;
+        dislikeContainer.appendChild(span);
+      });
+
+      const menuDrawer = document.getElementById("menuDrawer");
+      cfg.menuSections.forEach(section => {
+        const sectionHeader = document.createElement("div");
+        sectionHeader.className = "menu-section-header"; sectionHeader.textContent = section.title;
+        menuDrawer.appendChild(sectionHeader);
+        section.links.forEach(link => {
+          const a = document.createElement("a");
+          a.href = link.url; a.innerHTML = `${link.svgIcon} <span>${link.label}</span>`;
+          if (link.url.startsWith("http")) { a.target = "_blank"; a.rel = "noopener noreferrer"; } 
+          else { a.addEventListener("click", () => closeMenu()); }
+          menuDrawer.appendChild(a);
+        });
+      });
+
+      const menuToggle = document.getElementById("menuToggle");
+      const menuOverlay = document.getElementById("menuOverlay");
+      function openMenu() { menuToggle.classList.add("active"); menuDrawer.classList.add("open"); menuOverlay.classList.add("open"); }
+      function closeMenu() { menuToggle.classList.remove("active"); menuDrawer.classList.remove("open"); menuOverlay.classList.remove("open"); }
+      menuToggle.addEventListener("click", () => { menuDrawer.classList.contains("open") ? closeMenu() : openMenu(); });
+      menuOverlay.addEventListener("click", closeMenu);
     });
   </script>
 </body>
