@@ -11,8 +11,8 @@ const SITE_CONFIG = {
 
   // 好きなもの（指定7種 + 10種生成）
   likes: [
-    "ゲーム", "寝ること", "音楽鑑賞", "猫", "犬", "焼きそばパン", "甘いもの",
-    "アニメ", "YouTube", "お昼寝", "布団", "スマホ", "フライドポテト"
+    "ゲーム", "寝ること", "音楽鑑賞", "猫", "犬", "焼きそばパン", "甘いもの","果物系ジュース",
+    "アニメ", "YouTube", "お昼寝", "布団", "スマホ", "フライドポテト","コカコーラ","ペプs((殴"
   ],
 
   // 嫌いなもの（指定13種 + 15種生成）
@@ -45,6 +45,11 @@ const SITE_CONFIG = {
       class: "btn-donate",
       svgIcon: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`
     },
+     { 
+          label: "フレンドコード一覧", 
+          url: "https://tunaisinbox.f5.si/friend/",
+          svgIcon: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 12h4"/><path d="M16 10v4"/></svg>`
+        },
     { 
       label: "サポート", 
       url: "https://tunaisinbox.f5.si/support", 
