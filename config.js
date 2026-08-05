@@ -2,7 +2,7 @@ const SITE_CONFIG = {
   // 基本プロフィール
   name: "tuna",
   iconUrl: "https://p16-common-sign.tiktokcdn.com/tos-alisg-avt-0068/e4c56b4f5fecbb0cafdee93bec905331~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=342f84c3&x-expires=1785952800&x-signature=Lf88aQgCK%2BkwiRR8gB5BFugubMI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my2",
-  bio: "このつなという人物は真面目に何かをやることができません",
+  bio: "このつなというバカな人物は真面目に何かをやることができません。",
   birthday: "01/21",
   oshi: "天馬司",
 
