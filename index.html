@@ -5,25 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
   <style>
-    /* -------------------------------------------------- */
-    /* PC環境での標準マウスカーソル完全非表示 (全要素強制) */
-    /* -------------------------------------------------- */
+  //きゃああああああああーのび太さんのえっちー
     @media (hover: hover) and (pointer: fine) {
       html, body, *, *::before, *::after {
         cursor: none !important;
       }
     }
 
-    /* 画面端での非表示補強 */
+
     html {
       width: 100vw;
       height: 100%;
       overflow-x: hidden;
     }
 
-    /* -------------------------------------------------- */
-    /* 提示されたローディング画面スタイル (完全変更不可) */
-    /* -------------------------------------------------- */
+
     * {
       margin: 0;
       padding: 0;
@@ -36,7 +32,6 @@
       height: 100vh;
     }
 
-    /* --- 初回ローディング画面 (初期ベースは漆黒) --- */
     #first-loading-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -142,9 +137,7 @@
       transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
     }
 
-    /* -------------------------------------------------- */
-    /* カスタムマウスカーソル (サイズ控えめ & 完璧な隠蔽) */
-    /* -------------------------------------------------- */
+
     #custom-cursor {
       position: fixed;
       top: 0;
@@ -163,7 +156,6 @@
       will-change: transform, left, top;
     }
 
-    /* 選択・ホバー時は少し大きくなる */
     #custom-cursor.hover {
       transform: translate(-50%, -50%) scale(1.25);
       background-color: #E2ECF7;
@@ -171,7 +163,7 @@
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6), 0 0 12px #E2ECF7;
     }
 
-    /* クリック時 */
+
     #custom-cursor.active {
       transform: translate(-50%, -50%) scale(0.85);
       background-color: #a1c4e6;
@@ -186,9 +178,7 @@
       }
     }
 
-    /* -------------------------------------------------- */
-    /* メインWebサイト用スタイル */
-    /* -------------------------------------------------- */
+
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
       color: #ffffff;
@@ -199,7 +189,7 @@
       user-select: none;
     }
 
-    /* 最下部での標準カーソルちらつき防止ガード（透明なガードエリア） */
+  
     .bottom-cursor-guard {
       position: fixed;
       bottom: 0;
@@ -234,7 +224,6 @@
       pointer-events: none;
     }
 
-    /* ハンバーガーボタン & サイドメニュー */
     .hamburger-btn {
       position: fixed;
       top: 20px; left: 20px;
@@ -333,7 +322,7 @@
       pointer-events: auto;
     }
 
-    /* メインエリア */
+
     .container {
       max-width: 720px;
       width: 100%;
@@ -520,10 +509,9 @@
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- 最下部カーソルガードエリア -->
   <div class="bottom-cursor-guard"></div>
 
-  <!-- 初回ローディング画面 (完全無変更) -->
+
   <div id="first-loading-screen">
     <div class="white-cover-overlay" id="white-cover"></div>
     <div class="first-loading-content">
@@ -536,16 +524,15 @@
     </div>
   </div>
 
-  <!-- カスタムマウスカーソル -->
+
   <div id="custom-cursor"></div>
 
-  <!-- 背景動画 (右クリック・停止不可) -->
+
   <div class="bg-video-container">
     <video id="bgVideo" class="bg-video" autoplay loop muted playsinline disablePictureInPicture preventContextMenu></video>
   </div>
   <div class="bg-overlay"></div>
 
-  <!-- メニューボタン -->
   <div class="hamburger-btn" id="menuToggle">
     <span></span>
     <span></span>
@@ -555,19 +542,19 @@
   <div class="menu-overlay" id="menuOverlay"></div>
   <nav class="menu-drawer" id="menuDrawer"></nav>
 
-  <!-- メインコンテンツ -->
+
   <div class="container">
     <div class="card profile-header" id="profile">
       <img id="userIcon" class="avatar" alt="Icon">
       <h1 id="userName" class="user-name"></h1>
       <div class="details-row">
         <span class="details-badge">
-          <!-- SVG: カレンダー -->
+
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           誕生日: <strong id="userBirthday"></strong>
         </span>
         <span class="details-badge">
-          <!-- SVG: スター -->
+
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           推し: <strong id="userOshi"></strong>
         </span>
@@ -578,7 +565,7 @@
 
     <div class="card">
       <h2 class="section-title">
-        <!-- SVG: SNS/リンク -->
+
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         SNS
       </h2>
@@ -587,14 +574,14 @@
 
     <div class="card" id="likes-dislikes">
       <h2 class="section-title">
-        <!-- SVG: ハート (緑/スキ) -->
+
         <svg viewBox="0 0 24 24" width="20" height="20" fill="#2ed573"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         好きなもの
       </h2>
       <div id="likeTags" class="tag-container" style="margin-bottom: 24px;"></div>
 
       <h2 class="section-title">
-        <!-- SVG: ハート (赤/キライ) -->
+
         <svg viewBox="0 0 24 24" width="20" height="20" fill="#ff4757"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         嫌いなもの
       </h2>
@@ -610,9 +597,6 @@
     document.addEventListener("DOMContentLoaded", () => {
       const cursor = document.getElementById("custom-cursor");
 
-      // --------------------------------------------------
-      // カスタムマウスカーソルの制御（画面端追従の強化）
-      // --------------------------------------------------
       let mouseX = -100, mouseY = -100;
       let cursorX = -100, cursorY = -100;
 
@@ -624,7 +608,6 @@
           mouseY = e.clientY;
         });
 
-        // ウィンドウからマウスが外れた場合（最下部・外周含む）に確実にカーソルを消す
         document.addEventListener("mouseleave", () => {
           cursor.style.opacity = "0";
         });
@@ -659,9 +642,7 @@
         });
       }
 
-      // --------------------------------------------------
-      // ローディングアニメーション制御 (提示コード無変更)
-      // --------------------------------------------------
+
       const firstLoadingScreen = document.getElementById("first-loading-screen");
       const whiteCover = document.getElementById("white-cover");
       const appLogoImg = document.getElementById("app-logo-img");
@@ -704,7 +685,7 @@
         appLogoImg.onerror = () => { startFirstLoadingAnimation(); };
       }
 
-      // 背景動画再生設定
+
       const cfg = SITE_CONFIG;
       const video = document.getElementById("bgVideo");
       video.src = cfg.bgVideoUrl;
@@ -719,18 +700,15 @@
       video.addEventListener("contextmenu", e => e.preventDefault());
       video.addEventListener("click", e => e.preventDefault());
 
-      // プロフィール適用
       document.getElementById("userIcon").src = cfg.iconUrl;
       document.getElementById("userName").textContent = cfg.name;
       document.getElementById("userBirthday").textContent = cfg.birthday;
       document.getElementById("userOshi").textContent = cfg.oshi;
       document.getElementById("userBio").textContent = cfg.bio;
 
-      // 汎用SVG（SVGが未登録の際のフォールバック用）
+ 
       const defaultExternalSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
-      const defaultTagSvg = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
 
-      // アクションボタン生成
       const actionGroup = document.getElementById("actionButtons");
       cfg.actionButtons.forEach(btn => {
         const a = document.createElement("a");
@@ -743,7 +721,7 @@
         actionGroup.appendChild(a);
       });
 
-      // SNS生成
+
       const snsGroup = document.getElementById("snsList");
       cfg.sns.forEach(sns => {
         const a = document.createElement("a");
@@ -762,7 +740,6 @@
         snsGroup.appendChild(a);
       });
 
-      // 好きなものタグ
       const likeContainer = document.getElementById("likeTags");
       cfg.likes.forEach(item => {
         const span = document.createElement("span");
@@ -771,7 +748,6 @@
         likeContainer.appendChild(span);
       });
 
-      // 嫌いなものタグ
       const dislikeContainer = document.getElementById("dislikeTags");
       cfg.dislikes.forEach(item => {
         const span = document.createElement("span");
@@ -780,7 +756,6 @@
         dislikeContainer.appendChild(span);
       });
 
-      // カテゴリー分けメニューリンクの動的生成
       const menuDrawer = document.getElementById("menuDrawer");
       cfg.menuSections.forEach(section => {
         const sectionHeader = document.createElement("div");
