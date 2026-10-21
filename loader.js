@@ -1,7 +1,7 @@
 /* loader.js — かわいいローディング(ロゴ + リング)/ 初回 + ページ遷移
    <head> 内で同期読み込みしてください: <script src="loader.js"></script> */
 (function () {
-  var LOGO = window.PL_LOGO || "cdn.tunaisinbox.f5.si/files/image/icon/raikyunico.png";
+  var LOGO = window.PL_LOGO || "https://cdn.tunaisinbox.f5.si/files/image/icon/raikyunico.png";
   var CIRC = 2 * Math.PI * 70; // リングの円周
 
   var seen = false;
