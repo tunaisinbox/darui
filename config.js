@@ -1,8 +1,8 @@
 const SITE_CONFIG = {
   // 基本プロフィール
   name: "tuna",
-  iconUrl: "https://files.catbox.moe/tvkghq.webp",
-  bio: "規約に気づいてエンジン魔改造してる", // 一言(hitokoto.json)が読めないときの予備
+  iconUrl: "https://pbs.twimg.com/profile_images/2099873760765771776/NrmlRvEG_400x400.jpg",
+  bio: "エラーが発生しました", // 一言(hitokoto.json)が読めないときの予備
   birthday: "01/21",
   oshi: "天馬司",
 
