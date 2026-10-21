@@ -166,11 +166,50 @@
     });
   }
 
+  // スマホなどで、reCAPTCHAの画像選択の画面が画面外にはみ出さないよう、
+  // 画面の中央に固定して、必要なら縮小して収める(吹き出しの矢印は隠す)
+  function watchChallenge() {
+    function fit() {
+      var frames = document.querySelectorAll('iframe[src*="recaptcha/api2/bframe"],iframe[src*="recaptcha/enterprise/bframe"]');
+      if (!frames.length) return;
+      Array.prototype.forEach.call(frames, function (f) {
+        var box = f.parentElement, outer = box && box.parentElement;
+        if (!box || !outer) return;
+        var vw = window.innerWidth, vh = window.innerHeight;
+        var w = box.offsetWidth || 400, h = box.offsetHeight || 580;
+        var s = Math.min(1, (vw - 16) / w, (vh - 16) / h);
+        var want = "translate(-50%, -50%) scale(" + s.toFixed(3) + ")";
+        var st = box.style;
+        if (st.getPropertyValue("position") !== "fixed" || st.transform !== want ||
+            st.getPropertyValue("left") !== "50%" || st.getPropertyValue("top") !== "50%") {
+          st.setProperty("position", "fixed", "important");
+          st.setProperty("left", "50%", "important");
+          st.setProperty("top", "50%", "important");
+          st.setProperty("right", "auto", "important");
+          st.setProperty("bottom", "auto", "important");
+          st.setProperty("margin", "0", "important");
+          st.setProperty("transform", want, "important");
+          st.setProperty("transform-origin", "center center", "important");
+        }
+        Array.prototype.forEach.call(outer.children, function (c) {
+          if (c === box) return;
+          var cs = getComputedStyle(c);
+          if (cs.position === "fixed" && c.offsetWidth >= vw * 0.9) return; // 背景の薄い幕は残す
+          if (c.style.getPropertyValue("display") !== "none") c.style.setProperty("display", "none", "important");
+        });
+      });
+    }
+    new MutationObserver(fit).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["style"] });
+    window.addEventListener("resize", fit);
+    window.addEventListener("orientationchange", fit);
+  }
+
   function init() {
     var cfg = cfgOf();
     if (!cfg || !cfg.siteKey) return;
     if (passed(cfg.ttlMinutes || 60)) { window.__gatePassed = true; return; }
     addStyle();
+    watchChallenge();
     var PL = window.PageLoader;
     if (PL && PL.hold && PL.root && PL.root() && document.getElementById("pl") && !document.getElementById("pl").classList.contains("hidden")) {
       buildInLoader(cfg, PL);
