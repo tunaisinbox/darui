@@ -4,8 +4,8 @@
    ・未ログイン  : 「ログイン」ボタン
    ・ログイン後  : アイコン + 名前 → 押すと「マイページ」「ログアウト」のメニュー */
 (function () {
-  var CLIENT_ID = "client_id: tuna_332df79aaf62b3482495";  // この形のまま(先頭の "client_id: " も含めて登録されているID)
-  var REDIRECT  = "https://tunaisinbox.f5.si/callback";  // 登録したものと同じ(callback.html で受け取る)
+  var CLIENT_ID = "tuna_b38ce56b02e68aa355c0";          // "client_id: " は付けない(IDだけ)
+  var REDIRECT  = "https://tunaisinbox.f5.si";           // 登録したものと1文字も違わないこと(末尾の / も含む)
   var SDK_URL   = "https://account.tunaisinbox.workers.dev/sdk.js";
   var ME_URL    = "https://account.tunaisinbox.workers.dev/me";
   var SCOPE     = "profile";
@@ -164,7 +164,7 @@
   }
 
   // ---------- 起動 ----------
-  var hasReturn = /[?&#](code|state)=/.test(location.search + location.hash); // ログインから戻ってきた直後か(通常は callback.html が処理します)
+  var hasReturn = /[?&#](code|state)=/.test(location.search + location.hash); // ログインから戻ってきた直後か
   var c = cached();
   if (c) renderLoggedIn(c); else renderLoggedOut();
 
