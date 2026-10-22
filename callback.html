@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ログイン中…</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
+      background: linear-gradient(160deg, #fff0f7 0%, #eef3ff 100%);
+      font-family: 'Hiragino Maru Gothic ProN', 'Arial Rounded MT Bold', 'Yu Gothic UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+    .card {
+      width: 100%; max-width: 340px; padding: 28px 20px; text-align: center; background: #fff;
+      border: 3px solid #ffc2dc; border-radius: 26px; box-shadow: 0 12px 36px rgba(255, 130, 180, .35);
+    }
+    .ring {
+      width: 44px; height: 44px; margin: 0 auto 14px; border-radius: 50%;
+      border: 5px solid rgba(255, 173, 207, .25); border-top-color: #ff9fc6; animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .msg { font-size: 15px; font-weight: 700; letter-spacing: .06em; color: #ff8fb8; }
+    .sub { margin-top: 8px; font-size: 12px; line-height: 1.7; color: #86aaf0; }
+    .err .ring { display: none; }
+    .err .msg { color: #ff6f9c; }
+    a { display: inline-block; margin-top: 14px; padding: 8px 18px; border-radius: 99px; font-weight: 700; font-size: 13px;
+        color: #fff; text-decoration: none; background: linear-gradient(90deg, #ffb3d1, #b9d4ff); }
+    a[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="ring"></div>
+    <div class="msg" id="msg">ログインしています…</div>
+    <div class="sub" id="sub">少しだけ待ってね</div>
+    <a href="/" id="home" hidden>トップへ戻る</a>
+  </div>
+
+  <script src="https://account.tunaisinbox.workers.dev/sdk.js"></script>
+  <script>
+    // login.js と同じ値にしてください
+    var CLIENT_ID = "client_id: tuna_b38ce56b02e68aa355c0";
+    var REDIRECT  = "https://tunaisinbox.f5.si/callback";
+
+    function fail(text) {
+      document.getElementById("card").className = "card err";
+      document.getElementById("msg").textContent = text;
+      document.getElementById("sub").textContent = "もう一度トップからログインしてみてください。";
+      document.getElementById("home").hidden = false;
+    }
+
+    try {
+      TunaAuth.init({ clientId: CLIENT_ID, redirectUri: REDIRECT });
+      TunaAuth.finish().then(function (user) {
+        if (!user) return fail("ログインできませんでした");
+        try { localStorage.setItem("tuna_user", JSON.stringify({ tunaid: user.tunaid, name: user.name })); } catch (e) {}
+        location.replace("/");
+      }).catch(function () { fail("ログインに失敗しました"); });
+    } catch (e) {
+      fail("ログインに失敗しました");
+    }
+  </script>
+</body>
+</html>
