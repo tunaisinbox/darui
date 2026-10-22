@@ -128,7 +128,7 @@
         btn.classList.remove("busy");
         btn.disabled = true;
         btn.querySelector("span").textContent = "つながりません";
-        setTimeout(function () { btn.disabled = false; btn.querySelector("span").textContent = "ログイン(ベータ)"; }, 2500);
+        setTimeout(function () { btn.disabled = false; btn.querySelector("span").textContent = "ログイン"; }, 2500);
       });
     });
   }
