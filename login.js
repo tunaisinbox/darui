@@ -4,7 +4,7 @@
    ・未ログイン  : 「ログイン」ボタン
    ・ログイン後  : アイコン + 名前 → 押すと「マイページ」「ログアウト」のメニュー */
 (function () {
-  var CLIENT_ID = "client_id: tuna_b38ce56b02e68aa355c0";  // この形のまま(先頭の "client_id: " も含めて登録されているID)
+  var CLIENT_ID = "client_id: tuna_332df79aaf62b3482495";  // この形のまま(先頭の "client_id: " も含めて登録されているID)
   var REDIRECT  = "https://tunaisinbox.f5.si/callback";  // 登録したものと同じ(callback.html で受け取る)
   var SDK_URL   = "https://account.tunaisinbox.workers.dev/sdk.js";
   var ME_URL    = "https://account.tunaisinbox.workers.dev/me";
