@@ -4,8 +4,8 @@
    ・未ログイン  : 「ログイン」ボタン
    ・ログイン後  : アイコン + 名前 → 押すと「マイページ」「ログアウト」のメニュー */
 (function () {
-  var CLIENT_ID = "tuna_b38ce56b02e68aa355c0";          // "client_id: " は付けない(IDだけ)
-  var REDIRECT  = "https://tunaisinbox.f5.si";           // 登録したものと1文字も違わないこと(末尾の / も含む)
+  var CLIENT_ID = "tuna_45ef8fe4bf8f91b91db3";          // 管理画面の "client_id: " の後ろだけ
+  var REDIRECT  = "https://tunaisinbox.f5.si/";          // このclient_idに登録したものと1文字も違わないこと(末尾の / も含む)
   var SDK_URL   = "https://account.tunaisinbox.workers.dev/sdk.js";
   var ME_URL    = "https://account.tunaisinbox.workers.dev/me";
   var SCOPE     = "profile";
@@ -128,7 +128,7 @@
         btn.classList.remove("busy");
         btn.disabled = true;
         btn.querySelector("span").textContent = "つながりません";
-        setTimeout(function () { btn.disabled = false; btn.querySelector("span").textContent = "ログイン"; }, 2500);
+        setTimeout(function () { btn.disabled = false; btn.querySelector("span").textContent = "ログイン(ベータ)"; }, 2500);
       });
     });
   }
