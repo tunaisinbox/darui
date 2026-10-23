@@ -5,7 +5,7 @@
    ・未ログイン  : 「ログイン」ボタン
    ・ログイン後  : アイコン + 名前 → 押すと「マイページ」「ログアウト」のメニュー */
 (function () {
-  var CLIENT_ID = "tuna_b38ce56b02e68aa355c0";
+  var CLIENT_ID = "tuna_45ef8fe4bf8f91b91db3";
   var REDIRECT  = "https://tunaisinbox.f5.si/";
   var SDK_URL   = "https://account.tunaisinbox.workers.dev/sdk.js";
   var ME_URL    = "https://account.tunaisinbox.workers.dev/me";
