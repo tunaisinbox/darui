@@ -7,8 +7,8 @@
 (function () {
   var CLIENT_ID = "tuna_45ef8fe4bf8f91b91db3";
   var REDIRECT  = "https://tunaisinbox.f5.si/";
-  var SDK_URL   = "https://account.tunaisinbox.workers.dev/sdk.js";
-  var ME_URL    = "https://account.tunaisinbox.workers.dev/me";
+  var SDK_URL   = "https://account.tunacat.f5.si/sdk.js";
+  var ME_URL    = "https://account.tunacat.f5.si/me";
   var SCOPE     = "profile";
   var CACHE_KEY = "tuna_user";
 
