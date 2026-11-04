@@ -1,7 +1,7 @@
 const SITE_CONFIG = {
   // 基本プロフィール
   name: "tuna",
-  iconUrl: "https://pbs.twimg.com/profile_images/2099873760765771776/NrmlRvEG_400x400.jpg",
+  iconUrl: "https://cdn.bsky.app/img/avatar/plain/did:plc:sndgtfef26jars5hcskq6ffc/bafkreihiynkmds76xstu2xxtju627agmffe7kiqems6tzhcaahdjw2pumi",
   bio: "エラーが発生しました", // 一言(hitokoto.json)が読めないときの予備
   birthday: "01/21",
   oshi: "天馬司",
